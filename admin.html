@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Admin Dashboard</h1>
+    <p id="adminName"></p>
+    <table>
+      <thead>
+        <tr>
+          <th>姓名</th>
+          <th>日期</th>
+          <th>上班时间</th>
+          <th>下班时间</th>
+        </tr>
+      </thead>
+      <tbody id="recordsTable"></tbody>
+    </table>
+    <a href="index.html"><button>返回首页</button></a>
+  </div>
+
+  <script>
+    if(localStorage.getItem('role') !== 'admin') {
+      alert('非管理员无法访问此页面');
+      window.location.href = 'login.html';
+    }
+
+    const name = localStorage.getItem('name') || 'admin';
+    document.getElementById('adminName').textContent = `管理员: ${name}`;
+
+    const records = JSON.parse(localStorage.getItem('records') || '{}');
+    const tbody = document.getElementById('recordsTable');
+
+    Object.keys(records).forEach(emp => {
+      Object.keys(records[emp]).forEach(date => {
+        const ci = records[emp][date].clockIn || '-';
+        const co = records[emp][date].clockOut || '-';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${emp}</td><td>${date}</td><td>${ci}</td><td>${co}</td>`;
+        tbody.appendChild(tr);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Employee Dashboard</h1>
+    <p id="employeeName"></p>
+    <button class="green" id="btnClockIn" onclick="clockIn()">打卡上班</button>
+    <button class="red" id="btnClockOut" onclick="clockOut()">打卡下班</button>
+    <p id="clockStatus"></p>
+    <a href="index.html"><button>返回首页</button></a>
+  </div>
+
+  <script>
+    // 确保只有员工访问
+    if(localStorage.getItem('role') !== 'employee') {
+      alert('非员工无法访问此页面');
+      window.location.href = 'login.html';
+    }
+
+    const name = localStorage.getItem('name') || '员工';
+    document.getElementById('employeeName').textContent = `姓名: ${name}`;
+
+    // 使用本地时间生成YYYY-MM-DD
+    const today = (() => {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    })();
+
+    const records = JSON.parse(localStorage.getItem('records') || '{}');
+
+    if (!records[name]) records[name] = {};
+    if (!records[name][today]) records[name][today] = { clockIn: null, clockOut: null };
+
+    updateStatus();
+
+    function clockIn() {
+      if(records[name][today].clockIn) {
+        updateStatus('今天已上班打卡，无法重复打卡');
+        return;
+      }
+      const time = new Date().toLocaleTimeString();
+      records[name][today].clockIn = time;
+      localStorage.setItem('records', JSON.stringify(records));
+      updateStatus();
+    }
+
+    function clockOut() {
+      if(records[name][today].clockOut) {
+        updateStatus('今天已下班打卡，无法重复打卡');
+        return;
+      }
+      const time = new Date().toLocaleTimeString();
+      records[name][today].clockOut = time;
+      localStorage.setItem('records', JSON.stringify(records));
+      updateStatus();
+    }
+
+    function updateStatus() {
+      const ci = records[name][today].clockIn;
+      const co = records[name][today].clockOut;
+      let msg = '';
+      if(ci) msg += `上班打卡时间: ${ci}\n`;
+      if(co) msg += `下班打卡时间: ${co}\n`;
+      if(!ci && !co) msg = '你今天还没有打卡';
+      document.getElementById('clockStatus').textContent = msg;
+    }
+  </script>
+</body>
+</html>
