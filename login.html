@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Attendance WebApp</title>
+  <title>Login</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
     <h1>Login</h1>
-    <input type="text" id="username" placeholder="请输入你的名字"><br>
+    <input type="text" id="username" placeholder="请输入名字"><br>
     <input type="password" id="password" placeholder="管理员密码（仅管理员）"><br>
-    <button class="green" onclick="login()">登录</button>
+    <button onclick="login()">登录</button>
     <p id="message" style="color:red;"></p>
   </div>
 
@@ -25,7 +25,6 @@
         return;
       }
 
-      // 管理员检查
       if(name === 'admin') {
         if(password === '120203') {
           localStorage.setItem('role', 'admin');
@@ -35,7 +34,6 @@
           document.getElementById('message').textContent = '管理员密码错误';
         }
       } else {
-        // 员工登录
         localStorage.setItem('role', 'employee');
         localStorage.setItem('name', name);
         window.location.href = 'employee.html';
